@@ -43,7 +43,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Sane flags
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     # sane defaults + hardening
     set(GLOBAL_COMPILE_FLAGS "-W -Wall -Wextra -Wno-unused-parameter -Werror=write-strings -Wredundant-decls -Werror=date-time -Werror=return-type -Werror=pointer-arith")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GLOBAL_COMPILE_FLAGS} -Werror=implicit-function-declaration -Werror=missing-prototypes")
@@ -51,6 +51,8 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     # useful flags for debugging
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address,bounds -fsanitize-undefined-trap-on-error ")
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address,bounds -fsanitize-undefined-trap-on-error ")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /experimental:c11atomics")
 endif()
 
 include(GNUInstallDirs)
@@ -70,6 +72,11 @@ if(APPLE)
 endif()
 
 qt_add_executable(CEmu ${MAYBE_MACOSX_BUNDLE}
+    ../../core/arm/arm.c ../../core/arm/arm.h
+    ../../core/arm/armcpu.c ../../core/arm/armcpu.h
+    ../../core/arm/armmem.c ../../core/arm/armmem.h
+    ../../core/arm/armstate.c ../../core/arm/armstate.h
+    ../../core/arm/sync.c ../../core/arm/sync.h
     ../../core/asic.c ../../core/asic.h
     ../../core/atomics.h
     ../../core/backlight.c ../../core/backlight.h
@@ -77,6 +84,7 @@ qt_add_executable(CEmu ${MAYBE_MACOSX_BUNDLE}
     ../../core/bus.c ../../core/bus.h
     ../../core/cert.c ../../core/cert.h
     ../../core/control.c ../../core/control.h
+    ../../core/coproc.c ../../core/coproc.h
     ../../core/cpu.c ../../core/cpu.h
     ../../core/debug/debug.c ../../core/debug/debug.h
     ../../core/debug/zdis/zdis.c ../../core/debug/zdis/zdis.h
